@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐍 Python Quest – 100 Level Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="grid-bg"></div>
+<div id="confettiBox"></div>
+<div id="pointsBox"></div>
+
+<!-- HINT MODAL -->
+<div class="overlay" id="hintOverlay" onclick="closeHint()"></div>
+<div class="hint-modal" id="hintModal">
+  <div class="modal-title">🔦 SYSTEM HINT UNLOCKED</div>
+  <div class="modal-body" id="hintBody">...</div>
+  <button class="btn-sec" onclick="closeHint()" style="margin-top:14px;width:100%">CLOSE</button>
+</div>
+
+<!-- ══════════ SCREEN: LOGIN ══════════ -->
+<div class="screen active" id="s-login">
+  <div class="center-wrap">
+    <div class="login-card">
+      <div class="login-logo">🐍 PYTHON<br>QUEST</div>
+      <div class="login-tag">AGENT AUTHENTICATION REQUIRED</div>
+      <div class="login-badge"><span class="dot green"></span>SECURE TERMINAL — CLASSIFIED ACCESS<span class="dot green"></span></div>
+
+      <div class="fgroup">
+        <label class="flabel">👤 AGENT USERNAME</label>
+        <input type="text" id="inpUser" class="finput" placeholder="Enter agent codename..." autocomplete="off" spellcheck="false">
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">🔑 ACCESS PASSWORD</label>
+        <div class="pw-row">
+          <input type="password" id="inpPass" class="finput" placeholder="Enter access code..." autocomplete="off">
+          <button class="eye-btn" id="eyeBtn" onclick="toggleEye()">👁</button>
+        </div>
+      </div>
+
+      <div class="attempts-row">Attempts remaining: <span id="attLeft" class="c-yellow">5</span></div>
+      <button class="btn-login" id="loginBtn" onclick="doLogin()">⚡ AUTHENTICATE</button>
+      <div class="login-err" id="loginErr"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: TITLE ══════════ -->
+<div class="screen" id="s-title">
+  <button class="btn-reset-float" onclick="confirmReset()" title="Reset Game">🔄 RESET</button>
+  <div class="center-wrap">
+    <div class="title-logo">🐍 PYTHON QUEST</div>
+    <div class="title-sub">100 LEVEL CHALLENGE</div>
+
+    <div class="story-card">
+      <div class="story-tag">📡 INCOMING TRANSMISSION — CLASSIFIED</div>
+      <p>The year is <b class="c-green">2087</b>. The world's AI systems have been <b class="c-pink">corrupted</b> by a rogue virus called <b class="c-green">NULLBYTE</b>. Every firewall is down. Cities are going dark.</p>
+      <p style="margin-top:10px">You are <b class="c-green">Agent PYRO</b> — the last coder with access to the <b class="c-yellow">Master Terminal</b>. Your weapon? <b class="c-green">Python</b>. Solve 100 challenges across 5 worlds to save humanity.</p>
+    </div>
+
+    <div class="motivate-card">
+      <div class="motivate-title">🔥 AGENT BRIEFING (Thanglish Mode)</div>
+      "Machan! Python therinja easy-a irukkum, theriyalena brain use pannu! 😂 Oru level solve panra — coffee break! World 5 reach panra — full legend status! NULLBYTE parka nee deadly da! LET'S GOOO! 🚀💪"
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-chip">🌍<span>5</span><small>Worlds</small></div>
+      <div class="stat-chip">🎯<span>100</span><small>Levels</small></div>
+      <div class="stat-chip">❤️<span>3</span><small>Lives</small></div>
+      <div class="stat-chip">⭐<span>10K</span><small>Max XP</small></div>
+    </div>
+
+    <button class="btn-pri" onclick="goWorldMap()">🚀 START MISSION</button>
+    <div class="save-note">Progress auto-saved · Intermediate Python</div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: WORLD MAP ══════════ -->
+<div class="screen" id="s-map">
+  <div class="topbar">
+    <div class="topbar-l">
+      <button class="btn-back" onclick="goTitle()">← BACK</button>
+      <div class="topbar-info">
+        <div class="topbar-title">🗺️ MISSION CONTROL</div>
+        <div class="topbar-sub">Select a world</div>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="hud-chip">⚡ <span id="mapXP">0</span></div>
+      <div class="hud-chip">LVL <span id="mapLvl">1</span>/100</div>
+      <button class="btn-reset-small" onclick="confirmReset()">🔄 RESET</button>
+    </div>
+  </div>
+  <div class="worlds-grid" id="worldsGrid"></div>
+</div>
+
+<!-- ══════════ SCREEN: LEVEL SELECT ══════════ -->
+<div class="screen" id="s-levels">
+  <div class="topbar">
+    <div class="topbar-l">
+      <button class="btn-back" onclick="goWorldMap()">← WORLDS</button>
+      <div class="topbar-info">
+        <div class="topbar-title" id="lsTitle">World 1</div>
+        <div class="topbar-sub" id="lsSub">Pick a level</div>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="hud-chip">⚡ <span id="lsXP">0</span></div>
+    </div>
+  </div>
+  <div class="levels-grid" id="levelsGrid"></div>
+</div>
+
+<!-- ══════════ SCREEN: GAME ══════════ -->
+<div class="screen" id="s-game">
+  <div class="game-topbar">
+    <div class="gt-left">
+      <button class="btn-back" style="font-size:10px;padding:6px 12px" onclick="goWorldMap()">← MAP</button>
+      <div class="lvl-chip" id="gLvlChip">LVL 1</div>
+      <div class="world-chip" id="gWorldChip">WORLD 1</div>
+    </div>
+    <div class="gt-right">
+      <div class="hearts" id="heartsRow">
+        <span id="h1">❤️</span><span id="h2">❤️</span><span id="h3">❤️</span>
+      </div>
+      <div class="xp-chip">⚡<span id="gXP">0</span></div>
+      <div class="timer-chip" id="gTimer">60s</div>
+    </div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  <div class="game-body" id="gameBody"></div>
+</div>
+
+<!-- ══════════ SCREEN: WORLD COMPLETE ══════════ -->
+<div class="screen" id="s-wdone">
+  <div class="center-wrap">
+    <div class="result-card green-card">
+      <div class="res-emoji" id="wdEmoji">🏆</div>
+      <div class="res-title c-green" id="wdTitle">WORLD COMPLETE!</div>
+      <div class="res-story" id="wdStory"></div>
+      <div class="res-stats" id="wdStats"></div>
+      <div class="res-btns">
+        <button class="btn-pri" id="wdNextBtn">⚡ NEXT WORLD</button>
+        <button class="btn-sec" onclick="goWorldMap()">🗺️ WORLD MAP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: GAME OVER ══════════ -->
+<div class="screen" id="s-over">
+  <div class="center-wrap">
+    <div class="result-card pink-card">
+      <div class="res-emoji">💀</div>
+      <div class="res-title c-pink">MISSION FAILED</div>
+      <div class="res-story" id="overMsg"></div>
+      <div class="res-stats" id="overMeme"></div>
+      <div class="res-btns">
+        <button class="btn-pri" onclick="retryLevel()">🔄 RETRY</button>
+        <button class="btn-sec" onclick="goWorldMap()">🗺️ MAP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: VICTORY ══════════ -->
+<div class="screen" id="s-win">
+  <div class="center-wrap">
+    <div class="result-card win-card">
+      <div class="res-emoji">🏆</div>
+      <div class="res-title win-title">NULLBYTE DEFEATED!</div>
+      <div class="res-story">
+        <b class="c-yellow">Congratulations, Agent PYRO.</b><br><br>
+        100 levels. 5 worlds. Countless bugs squashed.<br>
+        You didn't just write code —<br><b class="c-green">you rewrote the future.</b><br><br>
+        The global network is back online. Cities are lit.<br>
+        Somewhere in the digital void, NULLBYTE whispers:<br>
+        <em class="c-pink">"I'll be back in Python 4..."</em><br><br>
+        <b class="c-yellow">Machan, nee oru legend da! 🔥</b><br>
+        Python kadaisi varaikum ungala vida maatan! 💪
+      </div>
+      <div class="res-stats" id="winStats"></div>
+      <div class="res-btns">
+        <button class="btn-pri" onclick="resetGame()">🔄 PLAY AGAIN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ RESET CONFIRM MODAL ══════════ -->
+<div class="overlay" id="resetOverlay" onclick="closeReset()"></div>
+<div class="hint-modal" id="resetModal" style="border-color:rgba(255,0,102,0.35);max-width:360px">
+  <div class="modal-title" style="color:var(--pink)">⚠️ RESET GAME?</div>
+  <div class="modal-body">
+    Machan, <b style="color:var(--yellow)">all progress will be deleted!</b><br><br>
+    Score, completed levels, unlocked worlds — <b style="color:var(--pink)">everything gone!</b><br><br>
+    <span style="color:var(--dim)">NULLBYTE will be very happy if you reset... 😈</span>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:16px">
+    <button class="btn-sec" onclick="closeReset()" style="flex:1">❌ CANCEL</button>
+    <button class="btn-submit" onclick="doReset()" style="flex:1;background:linear-gradient(135deg,var(--pink),#aa0044)">✅ YES, RESET</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
